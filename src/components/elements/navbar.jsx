@@ -27,6 +27,7 @@ export const Navbar = () => {
 					<img
 						src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${user.email}`}
 						className="w-10 h-10 object-contain rounded-full"
+						alt="profile-logo"
 					/>
 				</button>
 			)}
