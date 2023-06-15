@@ -6,6 +6,31 @@ import { useState } from "react";
 export const HomePage = () => {
 	const [searchText, setSearchText] = useState("");
 
+	const onSearchPress = async () => {
+		try {
+			const response = await fetch("https://enbot.sidhant.live:5001/terms/search", {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+				},
+				body: JSON.stringify({
+					searchTerm: searchText,
+				}),
+			});
+
+			const data = await response.json();
+
+			console.log(data);
+		} catch (error) {
+			if (error instanceof Error) {
+				console.log(error.message);
+				return;
+			}
+
+			console.log("Internal Server Error!!");
+		}
+	};
+
 	return (
 		<main className="w-full min-h-screen flex flex-col bg-primary-yellow pt-14 items-center px-10">
 			<AuthenticatedChecker />
@@ -16,7 +41,7 @@ export const HomePage = () => {
 					value={searchText}
 					onTextChange={(e) => setSearchText(e.target.value)}
 					placeholder="Ask anything"
-					onSearchSendClick={() => console.log("CLICK!!")}
+					onSearchSendClick={onSearchPress}
 					type="search"
 				/>
 			</div>
