@@ -32,12 +32,14 @@ export function SearchSendBox(props) {
 					value={value}
 					onChange={onTextChange}
 					placeholder={placeholder}
+					aria-label="search send button"
 				/>
 			</div>
 
 			<button
 				className="bg-black h-10 py-2 px-4 ml-1 mb-2 rounded-lg flex items-center justify-center hover:shadow-lg hover:shadow-black/40"
 				onClick={onSearchSendClick}
+				aria-label="search send button"
 			>
 				{
 					type === "search" ? (
