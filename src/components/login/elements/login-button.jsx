@@ -28,12 +28,15 @@ export const LoginButton = () => {
 				return;
 			}
 
-			console.log(response.user);
-			loginMutation({
-				name: response.user.name,
-				email: response.user.email,
-				provider_id: response.user.sub,
-			});
+			// console.log(response.user);
+			// loginMutation({
+			// 	name: response.user.name,
+			// 	email: response.user.email,
+			// 	provider_id: response.user.sub,
+			// });
+
+			localStorage.setItem("auth-token", response.user.sub);
+			setIsAuthenticated(true);
 		},
 	});
 
