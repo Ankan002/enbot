@@ -3,21 +3,29 @@ import GoogleImage from "assets/images/google-logo.png";
 import { authAtom } from "atoms/auth-atom.js";
 import { getGoogleProfile } from "helpers/get-google-profile.js";
 import { login } from "helpers/login.js";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import { useSetRecoilState } from "recoil";
 
 export const LoginButton = () => {
 	const setIsAuthenticated = useSetRecoilState(authAtom);
+	const [isFetchingGoogleData, setIsFetchingGoogleData] = useState(false);
 
 	const { mutate: loginMutation, loading: isLoggingIn } = useMutation("login-mutation", login, {
 		onError: (e) => console.log(e),
-		onSuccess: (data) => console.log(data.authToken),
+		onSuccess: (data) => {
+			console.log(data.authToken);
+			localStorage.setItem("auth-token", data.authToken);
+			setIsAuthenticated(true);
+		},
 		retry: 0,
 	});
 
 	const googleLogin = useGoogleLogin({
 		onSuccess: async (token) => {
-			if (isLoggingIn) return;
+			if (isLoggingIn || isFetchingGoogleData) return;
+
+			setIsFetchingGoogleData(true);
 			console.log(token.access_token);
 			const response = await getGoogleProfile({
 				access_token: token.access_token,
@@ -25,18 +33,18 @@ export const LoginButton = () => {
 
 			if (!response.success) {
 				console.log(response.error);
+				setIsFetchingGoogleData(false);
 				return;
 			}
 
-			// console.log(response.user);
-			// loginMutation({
-			// 	name: response.user.name,
-			// 	email: response.user.email,
-			// 	provider_id: response.user.sub,
-			// });
+			console.log(response.user);
+			setIsFetchingGoogleData(false);
 
-			localStorage.setItem("auth-token", response.user.sub);
-			setIsAuthenticated(true);
+			loginMutation({
+				name: response.user.name,
+				email: response.user.email,
+				provider_id: response.user.sub,
+			});
 		},
 	});
 
